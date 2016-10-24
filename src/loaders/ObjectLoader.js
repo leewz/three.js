@@ -47,7 +47,7 @@ Object.assign( ObjectLoader.prototype, {
 
 		if ( this.texturePath === '' ) {
 
-			this.texturePath = url.substring( 0, url.lastIndexOf( '/' ) + 1 );
+			this.texturePath = _resolveRelativeTo('.', url);
 
 		}
 
@@ -374,7 +374,7 @@ Object.assign( ObjectLoader.prototype, {
 			for ( var i = 0, l = json.length; i < l; i ++ ) {
 
 				var image = json[ i ];
-				var path = /^(\/\/)|([a-z]+:(\/\/)?)/i.test( image.url ) ? image.url : scope.texturePath + image.url;
+				var path = _resolveRelativeTo(image.url, scope.texturePath);
 
 				images[ image.uuid ] = loadImage( path );
 
@@ -694,6 +694,16 @@ Object.assign( ObjectLoader.prototype, {
 	}()
 
 } );
+
+var _a = document.createElementNS( 'http://www.w3.org/1999/xhtml', 'a' );
+function _resolve(url) {
+	_a.href = url;
+	return _a.href;
+}
+
+function _resolveRelativeTo(url, base) {
+	return (new URL(url, _resolve(base))).href;
+}
 
 
 export { ObjectLoader };
